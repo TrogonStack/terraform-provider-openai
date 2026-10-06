@@ -26,13 +26,18 @@ mise run docs       # regenerate docs/ from schema descriptions
 
 ## Testing
 
-Unit tests never reach a real API. `internal/provider/retry_test.go` serves canned responses from an `httptest.Server` and drives the retrying client in `retry.go` directly against it.
+Unit tests never reach a real API. `internal/provider/fake_admin_api_test.go` and `internal/provider/fake_project_service_accounts_test.go` implement an in-memory fake of the Admin API project and service account endpoints, served from an `httptest.Server`. The acceptance tests point the provider's `base_url` at that fake and drive real Terraform plans and applies against it, including changes made outside Terraform. `internal/provider/retry_test.go` drives the retrying client in `retry.go` directly against canned responses.
 
 ```bash
-mise exec -- go test ./internal/provider/ -v -run TestRetry
+mise run test
+mise exec -- go test ./internal/provider/ -v -run TestAccProject
 ```
 
-Live tests are named `TestLive_*` and skip unless `TF_ACC` and `EXAMPLE_TEST_ENDPOINT` are set. Run them with `mise run test:live` once the provider has a resource worth exercising against a real API.
+Live tests are named `TestLive_*` and skip unless `TF_ACC` and `OPENAI_ADMIN_KEY` are set. They create real projects and service accounts in the organization that owns the key, and archive the projects when they finish, since the Admin API cannot delete a project. Archived projects stay visible in the organization.
+
+```bash
+OPENAI_ADMIN_KEY=... mise run test:live
+```
 
 ## Code layout
 
@@ -54,4 +59,4 @@ The commit type determines the next version, so it is worth getting right.
 
 [release-please](https://github.com/googleapis/release-please) reads the conventional commits merged into `main` and maintains an open release pull request with the computed version bump and changelog entries. Merging that pull request tags the release and publishes the provider archives, plus a GPG-signed checksum file, via [GoReleaser](https://goreleaser.com). No release happens without that pull request being merged.
 
-Each release carries the assets the provider registry protocol expects: one zip per platform, a `SHA256SUMS` file, a detached GPG signature over it, and `terraform-provider-example_<version>_manifest.json` built from `terraform-registry-manifest.json` at the repository root. That manifest declares plugin protocol 6, which `providerserver.Serve` uses because `main.go` leaves `ProtocolVersion` unset. Registries assume protocol 5.0 when the manifest is missing, so a release without it installs and then fails to load.
+Each release carries the assets the provider registry protocol expects: one zip per platform, a `SHA256SUMS` file, a detached GPG signature over it, and `terraform-provider-openai_<version>_manifest.json` built from `terraform-registry-manifest.json` at the repository root. That manifest declares plugin protocol 6, which `providerserver.Serve` uses because `main.go` leaves `ProtocolVersion` unset. Registries assume protocol 5.0 when the manifest is missing, so a release without it installs and then fails to load.

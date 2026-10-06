@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/TrogonStack/terraform-provider-example/internal/provider"
+	"github.com/TrogonStack/terraform-provider-openai/internal/provider"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 )
 
@@ -15,7 +15,7 @@ func main() {
 		context.Background(),
 		provider.New(version),
 		providerserver.ServeOpts{
-			Address: "registry.terraform.io/TrogonStack/example",
+			Address: "registry.terraform.io/TrogonStack/openai",
 		},
 	)
 	if err != nil {

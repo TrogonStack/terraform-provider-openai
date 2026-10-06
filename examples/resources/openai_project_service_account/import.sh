@@ -1,0 +1,1 @@
+terraform import openai_project_service_account.example proj_abc123/svc_acct_abc123

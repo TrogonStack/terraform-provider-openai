@@ -1,8 +1,8 @@
-# terraform-provider-example
+# terraform-provider-openai
 
 Template Terraform provider. Resources and data sources are added one at a time as they are needed; copy this repository to start a new provider, then rename `example` throughout (see "Using this template" in README.md).
 
-- **Module**: `github.com/TrogonStack/terraform-provider-example`
+- **Module**: `github.com/TrogonStack/terraform-provider-openai`
 - **Package**: `internal/provider/` (single flat package, all resources here)
 
 ## Commands

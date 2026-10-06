@@ -1,9 +1,17 @@
 terraform {
   required_providers {
-    example = {
-      source = "TrogonStack/example"
+    openai = {
+      source = "TrogonStack/openai"
     }
   }
 }
 
-provider "example" {}
+# Leave admin_api_key unset to read it from the OPENAI_ADMIN_KEY environment variable.
+provider "openai" {
+  admin_api_key = var.openai_admin_api_key
+}
+
+variable "openai_admin_api_key" {
+  type      = string
+  sensitive = true
+}
