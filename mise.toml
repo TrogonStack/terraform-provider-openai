@@ -41,7 +41,7 @@ fi
 
 [tasks.docs]
 description = "generate provider documentation for the registry"
-run = "tfplugindocs generate --provider-name example"
+run = "tfplugindocs generate --provider-name openai"
 
 [tasks.release]
 description = "build and publish release artifacts for the current tag"

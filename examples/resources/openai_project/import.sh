@@ -1,0 +1,1 @@
+terraform import openai_project.example proj_abc123

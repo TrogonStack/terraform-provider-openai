@@ -4,7 +4,7 @@
   "packages": {
     ".": {
       "release-type": "go",
-      "package-name": "terraform-provider-example",
+      "package-name": "terraform-provider-openai",
       "initial-version": "0.1.0",
       "include-component-in-tag": false,
       "include-v-in-tag": true,
