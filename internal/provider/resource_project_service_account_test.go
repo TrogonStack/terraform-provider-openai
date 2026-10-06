@@ -360,3 +360,34 @@ func TestParseProjectServiceAccountID(t *testing.T) {
 		t.Fatalf("path = %s", got)
 	}
 }
+
+func TestAccProjectServiceAccount_CreatedWithoutKeyIsReplaced(t *testing.T) {
+	fake := newFakeAdminAPI()
+	fake.omitCreatedAPIKey = true
+	server := setupTestServer(t, fake)
+	config := testProviderConfig(server) + testProjectServiceAccountConfig("example-service-account")
+
+	resource.Test(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             checkFakeServiceAccountsDeleted(fake),
+		Steps: []resource.TestStep{
+			{
+				Config:      config,
+				ExpectError: regexp.MustCompile(`has no api_key`),
+			},
+			{
+				PreConfig: func() {
+					fake.mu.Lock()
+					defer fake.mu.Unlock()
+					fake.omitCreatedAPIKey = false
+				},
+				Config:           config,
+				ConfigPlanChecks: expectProjectServiceAccountAction(plancheck.ResourceActionDestroyBeforeCreate),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(projectServiceAccountAddress, "id", "svc_acct_0002"),
+					resource.TestCheckResourceAttr(projectServiceAccountAddress, "api_key", "fake-key-value-for-svc_acct_0002"),
+				),
+			},
+		},
+	})
+}

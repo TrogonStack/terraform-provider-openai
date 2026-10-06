@@ -30,6 +30,7 @@ type fakeAdminAPI struct {
 	projects             map[string]*fakeProject
 	nextServiceAccountID int
 	serviceAccounts      map[string]*fakeServiceAccount
+	omitCreatedAPIKey    bool
 	mux                  *http.ServeMux
 }
 

@@ -1,6 +1,6 @@
 # terraform-provider-openai
 
-Template Terraform provider. Resources and data sources are added one at a time as they are needed; copy this repository to start a new provider, then rename `example` throughout (see "Using this template" in README.md).
+Terraform provider for the OpenAI Admin API. Resources and data sources are added one at a time as they are needed.
 
 - **Module**: `github.com/TrogonStack/terraform-provider-openai`
 - **Package**: `internal/provider/` (single flat package, all resources here)
@@ -28,8 +28,8 @@ Always load `terraform-provider-dev` when working on a resource or data source.
 ## Architecture
 
 - File naming: `resource_<name>.go`, `resource_<name>_test.go`, `data_source_<name>.go`
-- Provider client: `*http.Client`, built in `retry.go` and injected into every resource and data source through `Configure`'s `req.ProviderData`
-- Auth: none yet. A new provider typically resolves credentials in a `client.go` and layers them onto the transport `newRetryableClient` wraps, the same way the base transport in `retry.go` is pluggable today
+- Provider client: `*adminClient` from `client.go`, built on the retry transport in `retry.go` and injected into every resource and data source through `Configure`'s `req.ProviderData`
+- Auth: `client.go` resolves the Admin API key from `admin_api_key` or `OPENAI_ADMIN_KEY` and sends it as a bearer token on the transport `newRetryableClient` wraps
 - New resources must be registered in `provider.go` `Resources()` / `DataSources()`
 
 ## Conventions

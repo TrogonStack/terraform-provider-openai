@@ -186,12 +186,15 @@ func (r *projectServiceAccountResource) Create(ctx context.Context, req resource
 		resp.Diagnostics.AddError("API Error", fmt.Sprintf("Unable to create project service account: %s", err))
 		return
 	}
+	applyProjectServiceAccount(&plan, &created.projectServiceAccount)
 	if created.APIKey == nil {
-		resp.Diagnostics.AddError("API Error", fmt.Sprintf("The response to creating service account %s has no api_key, so its key value cannot be recorded. Delete the service account in project %s and apply again.", created.ID, project))
+		plan.APIKeyID = types.StringNull()
+		plan.APIKey = types.StringNull()
+		resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+		resp.Diagnostics.AddError("API Error", fmt.Sprintf("The response to creating service account %s has no api_key, so its key value cannot be recorded. Terraform marks the service account as tainted and replaces it on the next apply.", created.ID))
 		return
 	}
 
-	applyProjectServiceAccount(&plan, &created.projectServiceAccount)
 	plan.APIKeyID = types.StringValue(created.APIKey.ID)
 	plan.APIKey = types.StringValue(created.APIKey.Value)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)

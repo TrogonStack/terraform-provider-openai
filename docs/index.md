@@ -41,6 +41,7 @@ provider "openai" {
 variable "openai_admin_api_key" {
   type      = string
   sensitive = true
+  default   = null
 }
 ```
 

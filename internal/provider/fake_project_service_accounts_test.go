@@ -93,6 +93,10 @@ func (f *fakeAdminAPI) createServiceAccount(w http.ResponseWriter, r *http.Reque
 	}
 
 	serviceAccount := f.newServiceAccount(project.ID, *body.Name)
+	if f.omitCreatedAPIKey {
+		writeJSON(w, http.StatusOK, serviceAccount)
+		return
+	}
 	writeJSON(w, http.StatusOK, fakeServiceAccountCreateResponse{
 		fakeServiceAccount: serviceAccount,
 		APIKey: fakeServiceAccountAPIKey{
