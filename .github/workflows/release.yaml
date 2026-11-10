@@ -65,7 +65,7 @@ jobs:
         with:
           ref: ${{ needs.release-please.outputs.tag_name }}
           fetch-depth: 0
-      - uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca # v5.1.1
+      - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
       - run: mise run build
       - name: Load signing key
         uses: 1password/load-secrets-action@70062d7a876d3eb6334754fa26efd2fbd90c32f2 # v5.0.1
